@@ -1,0 +1,10 @@
+
+# Django #
+/ticketingSystemEnv
+*.log
+*.pot
+*.pyc
+pycache
+__pycache__
+media
+/db.sqlite3
