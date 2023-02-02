@@ -1,0 +1,29 @@
+<h1>Create Task</h1>
+
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label for="title">Titolo</label>
+      <input type="text" name="title" id="title" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="description">Descrizione</label>
+      <textarea name="description" id="description" class="form-control"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="deadline">Deadline</label>
+      <input type="date" name="deadline" id="deadline" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="created_by">Project manager</label>
+      <select name="created_by" id="created_by" class="form-control">
+        {% for pm in project_managers %}
+          <option value="{{ pm.pk }}">{{ pm.name_employee }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Invia</button>
+  </form>
+  
