@@ -11,7 +11,7 @@
           <option value="{{ task.pk }}">{{ task.title }}</option>
         {% endfor %}
       </select>
-      <label for="task">Developer</label>
+      <label for="developer">Developer</label>
       <select name="developer" id="developer" class="form-control">
         {% for dev in devs %}
           <option value="{{ dev.pk }}">{{ dev.name_employee }}</option>

@@ -5,3 +5,13 @@
 <button><a href="{% url 'create_task' %}">Create Task</a></button>
 
 <button><a href="{% url 'assign_task' %}">Assign Tasks</a></button>
+
+<table>
+    {% for task_assigned in all_tasks_assigned %}
+    <tr>
+      <td>{{ task_assigned.developer }}</td>
+      <td>{{ task_assigned.task }}</td>
+      <td><button><a href="{% url 'remove_task' task_assigned.pk %}">Remove Task</a></button></td>
+    </tr>
+    {% endfor %}
+  </table>

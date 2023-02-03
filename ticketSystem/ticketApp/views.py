@@ -8,7 +8,8 @@ from django.views import View
 class Dashboard(View):
 
     def get(self, request):
-        context={}
+        all_tasks_assigned = TaskAssigned.objects.order_by("developer").all()
+        context={"all_tasks_assigned": all_tasks_assigned}
         return render(request, "dashboard.html", context)
 
 class TaskCreate(View):
@@ -33,6 +34,24 @@ class TaskAssign(View):
         return render(request, "assignTask.html", context)
     def post(self, request):
         assign_task_form = AssignTaskToDevForm(request.POST)
+        task_fk = request.POST['task']
+        task = Task.objects.get(id=task_fk)
+        if task.status == 'waiting':
+            task.status = 'processing'
+            task.save()
         if assign_task_form.is_valid():
             assign_task_form.save()
             return redirect('dashboard')
+        
+
+class TaskRemove(View):
+    
+    def get(self, request, pk):
+        id_task_to_remove = TaskAssigned.objects.get(id=pk)
+        context = {'task_to_remove': id_task_to_remove}
+        return render(request, "remove_task.html", context)
+    
+    def post(self, request, pk):
+        id_task_to_remove = TaskAssigned.objects.get(id=pk)
+        id_task_to_remove.delete()
+        return redirect("dashboard")

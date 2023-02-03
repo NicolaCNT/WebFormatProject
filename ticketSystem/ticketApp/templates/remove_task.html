@@ -1,0 +1,11 @@
+<h1>Remove Task</h1>
+
+<p>Are you sure to delete the task assigned to the dev?</p>
+
+<form action="{% url 'remove_task' task_to_remove.id %}" method="POST">
+    {% csrf_token %}
+    <a href="{% url 'dashboard' %}">Cancel</a>
+    
+    <input type="submit" name="Confirm" value="Remove">
+
+</form>
