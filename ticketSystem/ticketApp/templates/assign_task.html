@@ -1,0 +1,17 @@
+<h1>Assign Task</h1>
+
+
+<form action="{% url 'assign_task' task_to_assign.id %}" method="post">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label for="task">Task to assign</label>
+      {{task_to_assign}}
+      <label for="developer">Developer</label>
+        {% for dev in devs %}
+          <button value="{{ dev.pk }}">{{ dev.name_employee }}</button>
+        {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-primary">Invia</button>
+</form>
+  
