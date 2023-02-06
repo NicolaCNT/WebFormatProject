@@ -22,7 +22,6 @@ class ManagerProjects():
     def get_cross_team_projects(self) -> QuerySet[Project]:
 
         """Function that returns the projects under developement by multiple teams
-
         Returns:
             QuerySet[Project]: QuerySet composed by projects 
         """
@@ -38,10 +37,8 @@ class ManagerProjects():
     
     def get_project_managers_already_assigned(self, project_pk : int) -> QuerySet[Employee]:
         """Function that returns project manager working to a project given the project's primary key
-
         Args:
             project_pk (int): primary key of the project
-
         Returns:
             QuerySet[Employee]: QuerySet of project managers working on a project
         """

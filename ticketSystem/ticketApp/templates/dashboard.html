@@ -3,9 +3,11 @@
 <h1>Dashboard</h1>
 
 <button><a href="{% url 'create_task' %}">Create Task</a></button>
+<br>
 
     
 <br>
+    <h1>Tasks</h1>
     {% for task in tasks_to_assign %}
         {{task}}
         <button><a href="{% url 'remove_task' task.pk %}">Remove Task</a></button>
@@ -14,20 +16,25 @@
 
 <br>
 
+<h1>Developers</h1>
 <div>
     {% for dev in developers %}
-        <button><a href="{% url 'processing_task' dev.pk %}">{{dev}}</a></button>
+        {{dev}}
+        <button><a href="{% url 'processing_task' dev.pk %}">Developer Tasks</a></button>
         <br>
     {% endfor %}
 </div>
 
 <br>
+
+<h1>Projects</h1>
+<div>
     {% for project in projects %}
         {{project}}
         <button><a href="{% url 'assign_project' project.pk %}">Assign Project</a></button>
         <br>
     {% endfor %}
-
+</div>
 <br>
 <button><a href="{% url 'cross_team_projects' %}">Check cross team projects</a></button>
 

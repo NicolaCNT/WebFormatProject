@@ -19,12 +19,12 @@ class Employee(models.Model):
     name_employee = models.CharField(max_length=100)
     phone_number = models.TextField()
     role = models.CharField(choices=ROLE_CHOICES, max_length=30)
-#   team_employee = models.ForeignKey(Team, on_delete=models.SET_NULL)
+
 
     def __str__(self):
         return self.name_employee
 
-#da cambiare per problema di dichiarazione, fare una tabella che accoppia employee con team dopo la loro dichiarazione
+
     
 
 class Team(models.Model):

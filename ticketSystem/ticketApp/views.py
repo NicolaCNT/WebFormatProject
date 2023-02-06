@@ -57,13 +57,16 @@ class TaskAssign(View):
     def post(self, request, **kwargs):
         task_pk = kwargs["pk"]
         dev_pk = request.POST.get('dev_pk')
-        developer = self.manager_employees.get_employee(dev_pk)
-        task_to_assign = self.manager_tasks.get_task(task_pk)
-        task_to_assign.assigned_to.add(developer)
-        if task_to_assign.get_status() == 'waiting':
-            task_to_assign.set_status('processing')
-        task_to_assign.save()
-        return redirect('dashboard')
+        try:
+            developer = self.manager_employees.get_employee(dev_pk)
+            task_to_assign = self.manager_tasks.get_task(task_pk)
+            task_to_assign.assigned_to.add(developer)
+            if task_to_assign.get_status() == 'waiting':
+                task_to_assign.set_status('processing')
+            task_to_assign.save()
+            return redirect('dashboard')
+        except Employee.DoesNotExist as employee_error:
+            return render(request, 'error.html', {'error': employee_error})
         
 
 class TaskRemove(View):
@@ -109,8 +112,12 @@ class ProjectAssign(View):
     def post(self, request, **kwargs):
         project_pk = kwargs["pk"]
         project_manager_pk = request.POST.get('pm_pk')
-        self.manager_projects.assign_project_to(project_pk, project_manager_pk)
-        return redirect('dashboard')
+        try:
+            self.manager_projects.assign_project_to(project_pk, project_manager_pk)
+            return redirect('dashboard')
+        except Employee.DoesNotExist as employee_error:
+            return render(request, 'error.html', {'error': employee_error})
+        
     
 class ProjectsCrossTeam(View):
 
