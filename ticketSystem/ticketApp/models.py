@@ -30,15 +30,12 @@ class Employee(models.Model):
 class Team(models.Model):
     name_team = models.CharField(max_length=100)
     project_manager = models.OneToOneField(Employee, on_delete=models.CASCADE, limit_choices_to={'role': Employee.PM})
-
+    composed_by = models.ManyToManyField(Employee, related_name="developers", limit_choices_to={'role': Employee.DEV})
 
     def __str__(self):
         return self.name_team
 
 
-class EmployeeInTeam(models.Model):
-    developer = models.ForeignKey(Employee, on_delete=models.CASCADE, limit_choices_to={'role': Employee.DEV})
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
 class Task(models.Model):
     WAITING = 'waiting'
@@ -76,10 +73,7 @@ class Project(models.Model):
     def __str__(self):
         return self.name
     
-class ProjectAssigned(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    project_manager = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    
+
 
 
 

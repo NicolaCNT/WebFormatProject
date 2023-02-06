@@ -1,17 +1,17 @@
 <h1>Assign Task</h1>
 
 
-<form action="{% url 'assign_task' task_to_assign.id %}" method="post">
-    {% csrf_token %}
-
-    <div class="form-group">
-      <label for="task">Task to assign</label>
-      {{task_to_assign}}
-      <label for="developer">Developer</label>
-        {% for dev in devs %}
-          <button value="{{ dev.pk }}">{{ dev.name_employee }}</button>
-        {% endfor %}
-    </div>
-    <button type="submit" class="btn btn-primary">Invia</button>
+<form method="POST">
+  {% csrf_token %}
+  <input type="hidden" name ="task_pk" value="{{task_to_assign.pk}}">
+    <label for="task">Assign {{task_to_assign}} task to: </label>
+          {% for dev in devs %}
+              {{ dev.name_employee }}
+          {% endfor %}
+      <select name="dev_pk" >
+          {% for dev in devs %}
+              <option value="{{dev.pk}}">{{ dev.name_employee }}</option>
+          {% endfor %}
+      </select>
+  <button type="submit" class="btn btn-primary">Invia</button>
 </form>
-  

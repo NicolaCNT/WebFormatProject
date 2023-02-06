@@ -6,7 +6,3 @@ class CreateTaskForm(forms.ModelForm):
         model = Task
         fields = ['title','description','deadline', 'created_by']
 
-class AssignTaskToDevForm(forms.ModelForm):
-   class Meta:
-        model = Task
-        fields = ['assigned_to']
