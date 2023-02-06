@@ -15,8 +15,19 @@
 <br>
 
 <div>
-{% for dev in developers %}
+    {% for dev in developers %}
         <button><a href="{% url 'processing_task' dev.pk %}">{{dev}}</a></button>
         <br>
     {% endfor %}
 </div>
+
+<br>
+    {% for project in projects %}
+        {{project}}
+        <button><a href="{% url 'assign_project' project.pk %}">Assign Project</a></button>
+        <br>
+    {% endfor %}
+
+<br>
+<button><a href="{% url 'cross_team_projects' %}">Check cross team projects</a></button>
+

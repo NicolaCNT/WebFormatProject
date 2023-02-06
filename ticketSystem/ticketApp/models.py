@@ -23,15 +23,14 @@ class Employee(models.Model):
 
     def __str__(self):
         return self.name_employee
-    
-    def get_employees(self, role_to_filter):
-        return self.objects.filter(role = role_to_filter)
-#da cambiare per problema di dichiarazione, fare una tabella che accoppia employee con team dopo la loro dichiarazione
 
+#da cambiare per problema di dichiarazione, fare una tabella che accoppia employee con team dopo la loro dichiarazione
+    
 
 class Team(models.Model):
     name_team = models.CharField(max_length=100)
     project_manager = models.OneToOneField(Employee, on_delete=models.CASCADE, limit_choices_to={'role': Employee.PM})
+
 
     def __str__(self):
         return self.name_team
@@ -57,9 +56,11 @@ class Task(models.Model):
     deadline = models.DateField()
     created_by = models.ForeignKey(Employee, on_delete=models.CASCADE, limit_choices_to={'role': Employee.PM})
     assigned_to = models.ManyToManyField(Employee, related_name="devs", limit_choices_to={'role': Employee.DEV})
+   
 
     def __str__(self):
         return self.title
+
 
     def get_status(self):
         return self.status
@@ -72,8 +73,9 @@ class Project(models.Model):
     name = models.CharField(max_length=20)
     assigned_to = models.ManyToManyField(Employee, related_name="pm", limit_choices_to={'role': Employee.PM})
 
-
-
+    def __str__(self):
+        return self.name
+    
 class ProjectAssigned(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     project_manager = models.ForeignKey(Employee, on_delete=models.CASCADE)

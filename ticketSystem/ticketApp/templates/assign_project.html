@@ -1,0 +1,17 @@
+<h1>Assign project named " {{project}} "</h1>
+
+
+
+<form method="POST">
+    {% csrf_token %}
+    <input type="hidden" name ="project_pk" value="{{project.pk}}">
+      <label for="project">Assign project to: </label>
+        <select name="pm_pk" >
+            {% for project_manager in project_managers %}
+                <option value="{{project_manager.pk}}">{{ project_manager }}</option>
+            {% endfor %}
+        </select>
+    <button type="submit" class="btn btn-primary">Invia</button>
+</form>
+
+  

@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect
 from .forms import CreateTaskForm, AssignTaskToDevForm
+from .manager_employees import ManagerEmployees
+from .manager_projects import ManagerProjects
+from .manager_tasks import ManagerTasks
 from .models import *
 from django.db.models import Q
 from django.views import View
@@ -8,17 +11,20 @@ from django.views import View
 
 class Dashboard(View):
 
+    employees = ManagerEmployees()
+    projects = ManagerProjects()
+    tasks = ManagerTasks()
+
+
     def get(self, request):
-        developers = Employee.objects.filter(role = 'DEV')
-        #all_tasks_assigned = TaskAssigned.objects.order_by("developer").all()
-        for dev in developers:
-            developer = Employee.objects.get(name_employee = dev.name_employee)
-            tasks_assigned = developer.devs.filter( status = 'processing' )
-        tasks_to_assign = Task.objects.filter(Q(status = 'processing') | Q(status = 'waiting'))
+        
+        developers = self.employees.get_employees_by_role('DEV')
+        projects = self.projects.get_all()
+        tasks_to_assign = self.tasks.get_assignable_tasks()
+
         context={
-            #"all_tasks_assigned": all_tasks_assigned,
+            "projects": projects,
             "tasks_to_assign": tasks_to_assign,
-            "tasks" : tasks_assigned,
             "developers": developers}
         return render(request, "dashboard.html", context)
 
@@ -26,8 +32,9 @@ class Dashboard(View):
 class TaskCreate(View):
 
     def get(self, request):
-        all_project_managers = Employee.objects.filter(role='PM')
-        context = {'project_managers': all_project_managers}
+        employees = ManagerEmployees()
+        project_managers = employees.get_employees_by_role('PM')
+        context = {'project_managers': project_managers}
         return render(request, "create_task.html", context)
 
     def post(self, request):
@@ -38,10 +45,12 @@ class TaskCreate(View):
 
 class TaskAssign(View):
     def get(self, request, pk):
-        task_to_assign = Task.objects.get(id=pk)
-        all_devs = Employee.objects.filter(role = 'DEV')
+        tasks = ManagerTasks()
+        employees = ManagerEmployees()
+        task_to_assign = tasks.get_task()
+        developers = employees.get_employees_by_role('DEV')
         devs_to_assign = []
-        for dev in all_devs:
+        for dev in developers:
             if dev.id != task_to_assign.assigned_to:
                 devs_to_assign.append(dev)
         
@@ -50,7 +59,7 @@ class TaskAssign(View):
                    }
         return render(request, "assign_task.html", context)
     
-    def post(self, request):
+    def post(self, request, dev_pk, task_pk):
 
         assign_task_form = AssignTaskToDevForm(request.POST)
         dev = Employee.objects.get(id=dev_pk)
@@ -62,28 +71,62 @@ class TaskAssign(View):
         
 
 class TaskRemove(View):
-    
+    tasks = ManagerTasks()
     def get(self, request, pk):
-        task_to_remove = Task.objects.get(id=pk)
+        task_to_remove = self.tasks.get_task(pk)
         context = {'task_to_remove': task_to_remove}
         return render(request, "remove_task.html", context)
     
     def post(self, request, pk):
-        task_to_remove = Task.objects.get(id=pk)
+        task_to_remove = self.tasks.get_task(pk)
         task_to_remove.delete()
         return redirect("dashboard")
 
-class TaskProcessing(View):
-    def get(self, request, pk):
-        dev = Employee.objects.get(id=pk)
-        developer_tasks = Task.objects.filter(assigned_to=dev.id, status = 'processing')
-        
 
-        context = {'dev' : dev, 'developer_tasks': developer_tasks}
+class TaskProcessing(View):
+    employees = ManagerEmployees()
+    def get(self, request, pk):
+        developer = self.employees.get_employee(pk)
+        developer_tasks = self.employees.get_developer_tasks_processing(pk)
+        context = {'dev' : developer, 'developer_tasks': developer_tasks}
         return render(request, "processing_task.html", context)
 
-    def post(self, request, pk):
+    def post(self, request):
         #developer_tasks = TaskAssigned.objects.filter(developer = pk).values("task")
         #tasks_processing = developer_tasks.filter(status = "processing")
         #context = {'tasks_processing': tasks_processing}
         pass
+
+class ProjectAssign(View):
+
+    employees = ManagerEmployees()
+    projects = ManagerProjects()
+
+
+    def get(self, request, pk):
+        project_to_assign = self.projects.get_project(pk)
+        project_managers_unassigned = self.projects.get_project_managers_unassigned(pk)
+        context = {
+            'project_managers' : project_managers_unassigned,
+            'project': project_to_assign
+            }
+        return render(request, "assign_project.html", context)
+    
+    def post(self, request, **kwargs):
+        project_pk = kwargs["pk"]
+        project_manager_pk = request.POST.get('pm_pk')
+        self.projects.assign_projects_to(project_pk, project_manager_pk)
+        return redirect('dashboard')
+    
+class ProjectsCrossTeam(View):
+
+    projects = ManagerProjects()
+
+    def get(self, request):
+        cross_team_projects = self.projects.get_cross_team_projects()
+        context = {'cross_team_projects': cross_team_projects}
+        return render(request, "cross_team_projects.html", context)
+
+        
+
+    
